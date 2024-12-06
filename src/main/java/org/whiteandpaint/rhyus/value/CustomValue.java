@@ -19,7 +19,7 @@ public class CustomValue {
             }
 
             String content = new String(Files.readAllBytes(Paths.get(fileName)));
-            Config.adminKey = content;
+            Config.adminKey = content.replaceAll("\r", "").replaceAll("\n", "");
         } catch (IOException e) {
             System.err.println("Get adminKey file error：" + e.getMessage());
         }
