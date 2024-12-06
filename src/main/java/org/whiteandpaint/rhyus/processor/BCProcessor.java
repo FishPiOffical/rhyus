@@ -2,10 +2,14 @@ package org.whiteandpaint.rhyus.processor;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.whiteandpaint.rhyus.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BCProcessor {
 
-    public static void commandResolve(String command) {
+    public static void commandResolve(ChannelHandlerContext ctx, String command) {
         if (command.startsWith("tell")) {
             // 发送文本给指定用户
             String to = command.split(" ")[1];
@@ -29,7 +33,28 @@ public class BCProcessor {
             String content = command.replace("slow ", "");
             System.out.println("slow: " + content);
 
+        } else if (command.equals("online")) {
+            sendText(ctx, getOnlineNumber() + "");
         }
+    }
+
+    public static Integer getOnlineNumber() {
+        return getOnline().size();
+    }
+
+    public static Map<String, JSONObject> getOnline() {
+        try {
+            // 使用 HashMap 去重
+            Map<String, JSONObject> filteredOnlineUsers = new HashMap<>();
+            for (JSONObject object : AuthProcessor.onlineUsers.values()) {
+                String name = object.optString("userName");
+                filteredOnlineUsers.put(name, object);
+            }
+
+            return filteredOnlineUsers;
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     public static void sendText(ChannelHandlerContext ctx, String text) {

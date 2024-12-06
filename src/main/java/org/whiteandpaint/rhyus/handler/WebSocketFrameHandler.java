@@ -31,7 +31,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
             if (parts.length == 2) {
                 if (parts[0].equals(Config.adminKey)) {
                     String command = parts[1];
-                    BCProcessor.commandResolve(command);
+                    BCProcessor.commandResolve(channelHandlerContext, command);
                 }
             }
         }
