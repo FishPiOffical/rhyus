@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.whiteandpaint.rhyus.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class BCProcessor {
             System.out.println("slow: " + content);
 
         } else if (command.equals("online")) {
-            sendText(ctx, getOnlineNumber() + "");
+            sendText(ctx, Arrays.toString(AuthProcessor.onlineUsers.values().toArray()));
         }
     }
 
