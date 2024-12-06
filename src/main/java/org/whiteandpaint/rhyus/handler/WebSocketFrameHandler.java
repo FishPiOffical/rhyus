@@ -3,6 +3,8 @@ package org.whiteandpaint.rhyus.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.whiteandpaint.rhyus.processor.BCProcessor;
+import org.whiteandpaint.rhyus.value.Config;
 
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     @Override
@@ -24,14 +26,15 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
     @Override
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
         String text = textWebSocketFrame.text();
-        if (text.contains(":")) {
-            String[] parts = text.split(":");
+        if (text.contains(":::")) {
+            String[] parts = text.split(":::");
             if (parts.length == 2) {
-
+                if (parts[0].equals(Config.adminKey)) {
+                    String command = parts[1];
+                    BCProcessor.commandResolve(command);
+                    System.out.println("Command OK: " + command);
+                }
             }
         }
-
-        // 发送响应消息
-        //channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame("Message received: " + textWebSocketFrame.text()));
     }
 }

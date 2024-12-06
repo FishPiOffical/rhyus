@@ -30,6 +30,9 @@ public class HTTPFrameHandler extends ChannelInboundHandlerAdapter {
                     userName = AuthProcessor.authenticate(ctx, apiKey);
                 }
             }
+        } else {
+            ctx.fireChannelRead(msg);
+            return;
         }
 
         if (!userName.isEmpty()) {
