@@ -1,0 +1,59 @@
+package org.whiteandpaint.rhyus;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
+import org.whiteandpaint.rhyus.handler.HTTPFrameHandler;
+import org.whiteandpaint.rhyus.handler.WebSocketFrameHandler;
+
+public class WebSocketServer {
+
+    private final int port;
+
+    public WebSocketServer(int port) {
+        this.port = port;
+    }
+
+    public void run() throws Exception {
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        try {
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast(new HttpServerCodec());
+                            pipeline.addLast(new ChunkedWriteHandler());
+                            pipeline.addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
+                            pipeline.addLast(new HTTPFrameHandler());
+                            pipeline.addLast(new WebSocketServerProtocolHandler("/"));
+                            pipeline.addLast(new WebSocketFrameHandler());
+                        }
+                    })
+                    .option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true);
+
+            // 绑定端口并启动服务器
+            ChannelFuture f = b.bind(port).sync();
+            System.out.println("Rhyus server started at ws://0.0.0.0:" + port);
+            f.channel().closeFuture().sync();
+        } finally {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        int port = 10831;
+        new WebSocketServer(port).run();
+    }
+}
