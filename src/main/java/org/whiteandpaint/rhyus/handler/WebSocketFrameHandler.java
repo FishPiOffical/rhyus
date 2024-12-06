@@ -23,8 +23,13 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
 
     @Override
     protected void messageReceived(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
-        // 在这里处理接收到的消息
-        //System.out.println("Received message: " + textWebSocketFrame.text());
+        String text = textWebSocketFrame.text();
+        if (text.contains(":")) {
+            String[] parts = text.split(":");
+            if (parts.length == 2) {
+
+            }
+        }
 
         // 发送响应消息
         //channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame("Message received: " + textWebSocketFrame.text()));

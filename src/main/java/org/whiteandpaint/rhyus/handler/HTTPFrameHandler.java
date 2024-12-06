@@ -13,6 +13,7 @@ import java.util.Map;
 public class HTTPFrameHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        String userName = "";
         if (msg instanceof FullHttpRequest) {
             FullHttpRequest request = (FullHttpRequest) msg;
 
@@ -26,11 +27,15 @@ public class HTTPFrameHandler extends ChannelInboundHandlerAdapter {
                 List<String> apiKeys = parameters.get("apiKey");
                 if (!apiKeys.isEmpty()) {
                     String apiKey = apiKeys.get(0);
-                    AuthProcessor.authenticate(ctx, apiKey);
+                    userName = AuthProcessor.authenticate(ctx, apiKey);
                 }
             }
         }
 
-        ctx.fireChannelRead(msg);
+        if (!userName.isEmpty()) {
+            ctx.fireChannelRead(msg);
+        } else {
+            ctx.close();
+        }
     }
 }

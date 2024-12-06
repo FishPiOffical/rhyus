@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.whiteandpaint.rhyus.handler.HTTPFrameHandler;
 import org.whiteandpaint.rhyus.handler.WebSocketFrameHandler;
+import org.whiteandpaint.rhyus.value.CustomValue;
 
 public class WebSocketServer {
 
@@ -42,7 +43,8 @@ public class WebSocketServer {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            // 绑定端口并启动服务器
+            CustomValue.init();
+
             ChannelFuture f = b.bind(port).sync();
             System.out.println("Rhyus server started at ws://0.0.0.0:" + port);
             f.channel().closeFuture().sync();
