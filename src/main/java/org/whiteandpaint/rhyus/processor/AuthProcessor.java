@@ -3,24 +3,18 @@ package org.whiteandpaint.rhyus.processor;
 import io.netty.channel.ChannelHandlerContext;
 import org.whiteandpaint.rhyus.json.JSONObject;
 import org.whiteandpaint.rhyus.value.Config;
-import org.whiteandpaint.rhyus.value.CustomValue;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthProcessor {
-
-    public static final Set<ChannelHandlerContext> SESSIONS = Collections.newSetFromMap(new ConcurrentHashMap());
 
     public static final ConcurrentHashMap<ChannelHandlerContext, JSONObject> onlineUsers = new ConcurrentHashMap<>();
 
@@ -59,7 +53,6 @@ public class AuthProcessor {
                 JSONObject data = json.optJSONObject("data");
                 String userName = data.optString("userName");
 
-                SESSIONS.add(ctx);
                 onlineUsers.put(ctx, data);
                 return userName;
             }
