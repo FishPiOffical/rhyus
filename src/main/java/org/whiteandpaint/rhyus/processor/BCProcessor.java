@@ -10,6 +10,8 @@ import java.util.Map;
 
 public class BCProcessor {
 
+    public static String fullOnline = "{}";
+
     public static void commandResolve(ChannelHandlerContext ctx, String command) {
         try {
             if (command.startsWith("tell")) {
@@ -63,6 +65,11 @@ public class BCProcessor {
                 sendText(ctx, Arrays.toString(AuthProcessor.onlineUsers.values().toArray()));
             } else if (command.equals("hello")) {
                 sendText(ctx, "hello!");
+            } else if (command.startsWith("push")) {
+                String content = command.replace("push ", "");
+                System.out.println("push: " + content);
+                fullOnline = content;
+                sendText(ctx, "OK");
             }
         } catch (Exception ignored) {
         }
