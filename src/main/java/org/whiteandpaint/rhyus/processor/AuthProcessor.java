@@ -1,6 +1,7 @@
 package org.whiteandpaint.rhyus.processor;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.whiteandpaint.rhyus.json.JSONObject;
 import org.whiteandpaint.rhyus.value.Config;
 

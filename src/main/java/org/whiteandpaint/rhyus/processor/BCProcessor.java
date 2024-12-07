@@ -61,6 +61,8 @@ public class BCProcessor {
                 }
             } else if (command.equals("online")) {
                 sendText(ctx, Arrays.toString(AuthProcessor.onlineUsers.values().toArray()));
+            } else if (command.equals("hello")) {
+                sendText(ctx, "hello!");
             }
         } catch (Exception ignored) {
         }
