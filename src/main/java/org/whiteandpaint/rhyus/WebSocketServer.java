@@ -10,26 +10,30 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.whiteandpaint.rhyus.handler.HTTPFrameHandler;
 import org.whiteandpaint.rhyus.handler.WebSocketFrameHandler;
 import org.whiteandpaint.rhyus.value.CustomValue;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.KeyStore;
+
 public class WebSocketServer {
 
     private final int port;
 
-    private final SslContext sslContext;
-
-    public WebSocketServer(int port, SslContext sslContext) {
+    public WebSocketServer(int port) {
         this.port = port;
-        this.sslContext = sslContext;
     }
 
     public static void main(String[] args) throws Exception {
         int port = 10831;
-        SslContext sslContext = SslContextProvider.createSslContext();
-        new WebSocketServer(port, sslContext).run();
+        new WebSocketServer(port).run();
     }
 
     public void run() throws Exception {
@@ -43,7 +47,6 @@ public class WebSocketServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addFirst(sslContext.newHandler(ch.alloc()));
                             pipeline.addLast(new HttpServerCodec());
                             pipeline.addLast(new ChunkedWriteHandler());
                             pipeline.addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
