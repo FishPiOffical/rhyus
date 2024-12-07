@@ -7,6 +7,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.whiteandpaint.rhyus.handler.HTTPFrameHandler;
@@ -40,6 +41,7 @@ public class WebSocketServer {
                             pipeline.addLast(new HttpServerCodec());
                             pipeline.addLast(new ChunkedWriteHandler());
                             pipeline.addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
+                            pipeline.addLast(new WebSocketFrameAggregator(Integer.MAX_VALUE));
                             pipeline.addLast(new HTTPFrameHandler());
                             pipeline.addLast(new WebSocketServerProtocolHandler("/"));
                             pipeline.addLast(new WebSocketFrameHandler());

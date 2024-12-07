@@ -36,9 +36,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
         ctx.close();
     }
 
-    @Override
-    protected void messageReceived(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
-        String text = textWebSocketFrame.text();
+    protected void messageReceived(ChannelHandlerContext channelHandlerContext, String text) throws Exception {
         if (text.contains(":::")) {
             String[] parts = text.split(":::");
             if (parts.length == 2) {
@@ -48,5 +46,35 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
                 }
             }
         }
+    }
+
+    private final StringBuilder messageBuffer = new StringBuilder();
+    private boolean isFirstFragment = true;
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object frame) throws Exception {
+        if (frame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
+            String message = textFrame.text();
+
+            synchronized (messageBuffer) {
+                if (isFirstFragment) {
+                    messageBuffer.setLength(0);
+                    isFirstFragment = false;
+                }
+                messageBuffer.append(message);
+
+                if (textFrame.isFinalFragment()) {
+                    String completeMessage = messageBuffer.toString();
+                    messageReceived(ctx, completeMessage);
+                    isFirstFragment = true;
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void messageReceived(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
+
     }
 }

@@ -2,14 +2,20 @@ package org.whiteandpaint.rhyus.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.websocketx.ContinuationWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.whiteandpaint.rhyus.processor.AuthProcessor;
 import org.whiteandpaint.rhyus.processor.BCProcessor;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class HTTPFrameHandler extends ChannelInboundHandlerAdapter {
     @Override
