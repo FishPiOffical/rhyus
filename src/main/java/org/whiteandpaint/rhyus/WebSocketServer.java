@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketFrameAggregator;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import org.whiteandpaint.rhyus.handler.HTTPFrameHandler;
 import org.whiteandpaint.rhyus.handler.WebSocketFrameHandler;
@@ -18,13 +19,17 @@ public class WebSocketServer {
 
     private final int port;
 
-    public WebSocketServer(int port) {
+    private final SslContext sslContext;
+
+    public WebSocketServer(int port, SslContext sslContext) {
         this.port = port;
+        this.sslContext = sslContext;
     }
 
     public static void main(String[] args) throws Exception {
         int port = 10831;
-        new WebSocketServer(port).run();
+        SslContext sslContext = SslContextProvider.createSslContext();
+        new WebSocketServer(port, sslContext).run();
     }
 
     public void run() throws Exception {
@@ -38,6 +43,7 @@ public class WebSocketServer {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addFirst(sslContext.newHandler(ch.alloc()));
                             pipeline.addLast(new HttpServerCodec());
                             pipeline.addLast(new ChunkedWriteHandler());
                             pipeline.addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
