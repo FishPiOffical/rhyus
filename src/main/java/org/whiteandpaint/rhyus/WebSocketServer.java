@@ -21,6 +21,11 @@ public class WebSocketServer {
         this.port = port;
     }
 
+    public static void main(String[] args) throws Exception {
+        int port = 10831;
+        new WebSocketServer(port).run();
+    }
+
     public void run() throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -52,10 +57,5 @@ public class WebSocketServer {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        int port = 10831;
-        new WebSocketServer(port).run();
     }
 }

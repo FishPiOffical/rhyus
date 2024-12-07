@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.whiteandpaint.rhyus.processor.AuthProcessor;
 
 import java.util.List;
@@ -14,8 +13,7 @@ public class HTTPFrameHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         String userName = "";
-        if (msg instanceof FullHttpRequest) {
-            FullHttpRequest request = (FullHttpRequest) msg;
+        if (msg instanceof FullHttpRequest request) {
 
             // 获取 URI 和解析查询参数
             String uri = request.uri();
