@@ -14,7 +14,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
                     ctx.channel().writeAndFlush(new TextWebSocketFrame(BCProcessor.fullOnline));
                 } catch (Exception e) {
                     e.printStackTrace();
