@@ -31,7 +31,23 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<TextWebSo
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        String userName = "";
+        for (ChannelHandlerContext key : AuthProcessor.onlineUsers.keySet()) {
+            if (key.channel().id().asLongText().equals(ctx.channel().id().asLongText())) {
+                userName = AuthProcessor.onlineUsers.get(key).optString("userName");
+            }
+        }
         AuthProcessor.onlineUsers.entrySet().removeIf(entry -> entry.getKey().channel().id().asLongText().equals(ctx.channel().id().asLongText()));
+        boolean leave = true;
+        for (ChannelHandlerContext key : AuthProcessor.onlineUsers.keySet()) {
+            if (AuthProcessor.onlineUsers.get(key).optString("userName").equals(userName) && !userName.isEmpty()) {
+                leave = false;
+            }
+        }
+        if (leave && !userName.isEmpty()) {
+            System.out.println(userName + " has left. SESSIONS=" + AuthProcessor.onlineUsers.size());
+            AuthProcessor.postMessageToMaster(Config.adminKey, "leave", userName);
+        }
         super.handlerRemoved(ctx);
     }
 

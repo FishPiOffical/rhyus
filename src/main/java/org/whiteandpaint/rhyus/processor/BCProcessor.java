@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.whiteandpaint.rhyus.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,6 +71,19 @@ public class BCProcessor {
                 System.out.println("push: " + content);
                 fullOnline = content;
                 sendText(ctx, "OK");
+            } else if (command.startsWith("kick")) {
+                String userName = command.replace("kick ", "");
+                System.out.println("kick: " + userName);
+                for (Map.Entry<ChannelHandlerContext, JSONObject> entry : AuthProcessor.onlineUsers.entrySet()) {
+                    String name = entry.getValue().optString("userName");
+                    if (userName.equals(name)) {
+                        entry.getKey().close();
+                    }
+                }
+            } else if (command.equals("clear")) {
+                Map<String, Long> result = AuthProcessor.clearOutdatedUser();
+                System.out.println("clear: " + result.toString());
+                sendText(ctx, result.toString());
             }
         } catch (Exception ignored) {
         }

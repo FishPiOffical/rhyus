@@ -23,8 +23,5 @@ public class CustomValue {
         } catch (IOException e) {
             System.err.println("Get adminKey file error：" + e.getMessage());
         }
-
-        File sslFile = new File("sslCert");
-        sslFile.mkdirs();
     }
 }
