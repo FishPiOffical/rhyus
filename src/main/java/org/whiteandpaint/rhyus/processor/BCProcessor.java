@@ -83,7 +83,12 @@ public class BCProcessor {
                 });
             } else if (command.equals("online")) {
                 ThreadPool.adminMessageThreadPool.submit(() -> {
-                    sendText(ctx, Arrays.toString(AuthProcessor.onlineUsers.values().toArray()));
+                    Map<String, JSONObject> tempOnlineUsers = new HashMap<>();
+                    for(JSONObject obj : AuthProcessor.onlineUsers.values()) {
+                        tempOnlineUsers.put(obj.optString("userName"), obj);
+                    }
+                    String text = Arrays.toString(tempOnlineUsers.values().toArray());
+                    sendText(ctx, text);
                 });
             } else if (command.equals("hello")) {
                 ThreadPool.adminMessageThreadPool.submit(() -> {

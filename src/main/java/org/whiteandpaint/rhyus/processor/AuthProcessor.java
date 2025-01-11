@@ -61,10 +61,15 @@ public class AuthProcessor {
                 String userName = data.optString("userName");
                 userActive.put(userName, System.currentTimeMillis());
                 boolean join = true;
+                int count = 0;
                 for (ChannelHandlerContext key : onlineUsers.keySet()) {
                     if (onlineUsers.get(key).optString("userName").equals(userName)) {
                         join = false;
+                        count++;
                     }
+                }
+                if (count > 10) {
+                    return "";
                 }
                 onlineUsers.put(ctx, data);
                 if (join) {
